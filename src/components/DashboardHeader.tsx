@@ -1,16 +1,26 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Search, Bell, Target, User, Settings, LogOut } from 'lucide-react';
+import { Search, Bell, Target, User, Settings, LogOut, Briefcase, FileText, BarChart3, FolderOpen, BookOpen } from 'lucide-react';
 
 export const DashboardHeader = () => {
+  const location = useLocation();
   const [notifications] = useState([
     { id: 1, text: "New job match: Senior Developer", type: "job", time: "2m ago" },
     { id: 2, text: "Resume viewed by Google", type: "view", time: "1h ago" },
     { id: 3, text: "Interview reminder: Tomorrow 2PM", type: "interview", time: "3h ago" }
   ]);
+
+  const navItems = [
+    { path: '/jobs', label: 'Jobs', icon: Briefcase },
+    { path: '/resume', label: 'Resume', icon: FileText },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/projects', label: 'Projects', icon: FolderOpen },
+    { path: '/learning', label: 'Learning', icon: BookOpen }
+  ];
 
   return (
     <div className="bg-card border-b border-border sticky top-0 z-50 shadow-career-sm">
@@ -19,9 +29,9 @@ export const DashboardHeader = () => {
           {/* Left Section - Welcome & Goal */}
           <div className="flex items-center space-x-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">
-                Welcome back, Alex! 👋
-              </h1>
+              <Link to="/" className="text-2xl font-bold text-foreground hover:text-accent transition-colors">
+                CareerHub
+              </Link>
               <Button variant="outline" size="sm" className="mt-2 animate-fade-in">
                 <Target className="mr-2 h-4 w-4" />
                 Career Goal: Senior Developer
@@ -29,8 +39,28 @@ export const DashboardHeader = () => {
             </div>
           </div>
 
+          {/* Navigation Menu */}
+          <nav className="hidden lg:flex items-center space-x-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link key={item.path} to={item.path}>
+                  <Button 
+                    variant={isActive ? "default" : "ghost"} 
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            })}
+          </nav>
+
           {/* Center - Search */}
-          <div className="flex-1 max-w-md mx-8">
+          <div className="flex-1 max-w-md mx-8 hidden md:block">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -77,10 +107,12 @@ export const DashboardHeader = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-card shadow-career-lg border-border">
-                <DropdownMenuItem className="cursor-pointer hover:bg-muted">
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
+                <Link to="/profile">
+                  <DropdownMenuItem className="cursor-pointer hover:bg-muted">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem className="cursor-pointer hover:bg-muted">
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
